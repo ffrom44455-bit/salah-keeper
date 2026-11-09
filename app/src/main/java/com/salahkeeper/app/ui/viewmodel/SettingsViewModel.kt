@@ -151,6 +151,13 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun completeOnboarding() {
+        viewModelScope.launch {
+            settingsRepository.setOnboardingCompleted(true)
+            prayerRepository.rescheduleAlarms()
+        }
+    }
+
     fun triggerTestAlarm() {
         prayerRepository.triggerTestAlarm()
     }

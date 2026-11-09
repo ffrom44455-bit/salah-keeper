@@ -67,7 +67,12 @@ class PrayerAlarmService : LifecycleService() {
         val fullScreenIntent = Intent(this, AlarmActivity::class.java).apply {
             putExtra(AlarmScheduler.EXTRA_PRAYER_NAME, currentPrayerName)
             putExtra(AlarmScheduler.EXTRA_SCHEDULED_TIME, scheduledTime)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            )
         }
         val fullScreenPendingIntent = PendingIntent.getActivity(
             this,
@@ -75,6 +80,13 @@ class PrayerAlarmService : LifecycleService() {
             fullScreenIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
+        // Try direct launch so that if user is on Instagram or home screen, activity opens immediately
+        try {
+            startActivity(fullScreenIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         // Notification stop action
         val stopIntent = Intent(this, PrayerAlarmService::class.java).apply {

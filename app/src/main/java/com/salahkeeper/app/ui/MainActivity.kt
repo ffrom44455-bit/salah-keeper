@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                         AppScreen.ONBOARDING -> {
                             OnboardingScreen(
                                 onComplete = {
-                                    // mark onboarding completed
+                                    settingsViewModel.completeOnboarding()
                                     settingsViewModel.toggleGps(true)
                                     currentScreen = AppScreen.MAIN_NAV
                                 },

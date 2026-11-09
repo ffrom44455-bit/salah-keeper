@@ -101,6 +101,11 @@ fun OnboardingScreen(
     val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
     val hasBatteryExemption = powerManager?.isIgnoringBatteryOptimizations(context.packageName) == true
 
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? android.app.AlarmManager
+    val hasExactAlarmPerm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        alarmManager?.canScheduleExactAlarms() == true
+    } else true
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -178,7 +183,7 @@ fun OnboardingScreen(
             title = "4. Exact Alarms & Lock Screen",
             description = "Bypasses Doze mode to ring on the exact second and awaken the screen.",
             icon = Icons.Rounded.PhoneAndroid,
-            isGranted = true, // Normal system permission granted at install on minSdk 26
+            isGranted = hasExactAlarmPerm,
             onRequest = {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {

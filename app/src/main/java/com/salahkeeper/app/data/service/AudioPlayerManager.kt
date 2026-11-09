@@ -63,18 +63,52 @@ class AudioPlayerManager @Inject constructor(
         try {
             stopAudio()
 
-            val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
             val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
-            // Maximize alarm stream volume for guaranteed wake up
+            // Maximize alarm stream volume for guaranteed loud ringing
             audioManager?.let { am ->
                 val maxVol = am.getStreamMaxVolume(AudioManager.STREAM_ALARM)
-                am.setStreamVolume(AudioManager.STREAM_ALARM, (maxVol * 0.9f).toInt(), 0)
+                am.setStreamVolume(AudioManager.STREAM_ALARM, maxVol, 0)
             }
 
+            // 1. Primary: Bundled custom adhan alarm sound (100% reliable, offline, no permissions needed)
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+
+            mediaPlayer = MediaPlayer.create(
+                context,
+                com.salahkeeper.app.R.raw.adhan_alarm,
+                audioAttributes,
+                audioManager?.generateAudioSessionId() ?: 0
+            ) ?: MediaPlayer().apply {
+                val afd = context.resources.openRawResourceFd(com.salahkeeper.app.R.raw.adhan_alarm)
+                setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                afd.close()
+                setAudioAttributes(audioAttributes)
+                prepare()
+            }
+
+            mediaPlayer?.apply {
+                isLooping = true
+                setVolume(1.0f, 1.0f)
+                start()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // 2. Secondary fallback: System alarm ringtone
+            playSystemFallback()
+        }
+    }
+
+    private fun playSystemFallback() {
+        try {
+            val fallbackUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+
             mediaPlayer = MediaPlayer().apply {
-                setDataSource(context, alarmSound)
+                setDataSource(context, fallbackUri)
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_ALARM)
@@ -82,6 +116,7 @@ class AudioPlayerManager @Inject constructor(
                         .build()
                 )
                 isLooping = true
+                setVolume(1.0f, 1.0f)
                 prepare()
                 start()
             }

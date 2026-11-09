@@ -21,8 +21,8 @@ class SalahKeeperApp : Application() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = getSystemService<NotificationManager>() ?: return
 
-            // Channel for the foreground prayer alarm
-            val alarmSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            // Channel for the foreground prayer alarm using bundled custom adhan
+            val alarmSoundUri = android.net.Uri.parse("android.resource://${packageName}/${R.raw.adhan_alarm}")
             val audioAttributes = AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .setUsage(AudioAttributes.USAGE_ALARM)
@@ -36,8 +36,9 @@ class SalahKeeperApp : Application() {
                 description = "Urgent continuous prayer alarm notifications"
                 setSound(alarmSoundUri, audioAttributes)
                 enableVibration(true)
-                vibrationPattern = longArrayOf(0, 500, 250, 500)
-                lockscreenVisibility = NotificationManager.IMPORTANCE_HIGH
+                vibrationPattern = longArrayOf(0, 800, 400, 800, 400)
+                lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
+                setBypassDnd(true)
             }
 
             // Channel for the 20-minute post-prayer check
