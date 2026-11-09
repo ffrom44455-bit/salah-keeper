@@ -50,12 +50,24 @@ class SalahKeeperApp : Application() {
                 enableVibration(true)
             }
 
-            notificationManager.createNotificationChannels(listOf(alarmChannel, checkChannel))
+            // Channel for the 7-minute pre-prayer preparation reminder
+            val preReminderChannel = NotificationChannel(
+                PRE_REMINDER_CHANNEL_ID,
+                "Pre-Prayer Preparation Reminder",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Notifications 7 minutes before prayer to make wudu and prepare"
+                enableVibration(true)
+                vibrationPattern = longArrayOf(0, 300, 150, 300)
+            }
+
+            notificationManager.createNotificationChannels(listOf(alarmChannel, checkChannel, preReminderChannel))
         }
     }
 
     companion object {
         const val ALARM_CHANNEL_ID = "salah_keeper_prayer_alarm"
         const val CHECK_CHANNEL_ID = "salah_keeper_post_check"
+        const val PRE_REMINDER_CHANNEL_ID = "salah_keeper_pre_reminder"
     }
 }

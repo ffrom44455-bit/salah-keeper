@@ -163,6 +163,175 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        // SECTION: Pre-Prayer Preparation Reminder (7 mins before)
+        Text(
+            text = "Pre-Prayer Preparation Reminder",
+            color = Color.White.copy(alpha = 0.85f),
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+
+        GlassCard(
+            modifier = Modifier.fillMaxWidth(),
+            hazeState = hazeState,
+            shape = RoundedCornerShape(20.dp),
+            cornerRadius = 20.dp
+        ) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Pre-Prayer Reminder", color = Color.White, fontWeight = FontWeight.SemiBold)
+                        Text(
+                            text = "Notifies you ${settings.preReminderMinutes} minutes before prayer to make wudu & prepare.",
+                            color = Color.White.copy(alpha = 0.65f),
+                            fontSize = 12.sp
+                        )
+                    }
+                    Switch(
+                        checked = settings.isPreReminderEnabled,
+                        onCheckedChange = { settingsViewModel.setPreReminder(it, settings.preReminderMinutes) },
+                        colors = SwitchDefaults.colors(checkedThumbColor = GlowGreen)
+                    )
+                }
+
+                if (settings.isPreReminderEnabled) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        listOf(5, 7, 10, 15).forEach { mins ->
+                            val isSelected = settings.preReminderMinutes == mins
+                            GlassCard(
+                                modifier = Modifier.weight(1f),
+                                hazeState = hazeState,
+                                shape = RoundedCornerShape(12.dp),
+                                cornerRadius = 12.dp,
+                                surfaceAlpha = if (isSelected) 0.28f else 0.10f,
+                                borderAlpha = if (isSelected) 0.6f else 0.2f,
+                                onClick = {
+                                    HapticFeedbackUtil.performTap(context)
+                                    settingsViewModel.setPreReminder(true, mins)
+                                }
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 10.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "${mins}m before",
+                                        color = if (isSelected) Color(0xFF38BDF8) else Color.White.copy(alpha = 0.7f),
+                                        fontSize = 11.sp,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // SECTION: In-App Auto Updates
+        val updateState by settingsViewModel.updateState.collectAsState()
+        Text(
+            text = "App Updates & Auto-Upgrade",
+            color = Color.White.copy(alpha = 0.85f),
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+
+        GlassCard(
+            modifier = Modifier.fillMaxWidth(),
+            hazeState = hazeState,
+            shape = RoundedCornerShape(20.dp),
+            cornerRadius = 20.dp
+        ) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text("Current Version: v${settingsViewModel.currentVersion}", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text("Sideloaded Auto-Updater", color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
+                    }
+
+                    Button(
+                        onClick = {
+                            HapticFeedbackUtil.performTap(context)
+                            settingsViewModel.checkForUpdates()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.18f)),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Check Now", color = Color.White, fontSize = 12.sp)
+                    }
+                }
+
+                // Update Status Visuals
+                when (val state = updateState) {
+                    is com.salahkeeper.app.data.service.UpdateState.Checking -> {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color(0xFF38BDF8), strokeWidth = 2.dp)
+                            Text("Checking GitHub Releases for new updates...", color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
+                        }
+                    }
+                    is com.salahkeeper.app.data.service.UpdateState.UpToDate -> {
+                        Text("✓ You have the latest version installed.", color = GlowGreen, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                    }
+                    is com.salahkeeper.app.data.service.UpdateState.Available -> {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text("🎉 New version available: v${state.versionTag}", color = Color(0xFFFDE047), fontWeight = FontWeight.Bold)
+                            Text(state.releaseNotes, color = Color.White.copy(alpha = 0.75f), fontSize = 12.sp)
+                            Button(
+                                onClick = { settingsViewModel.downloadAndInstall(state.downloadUrl) },
+                                colors = ButtonDefaults.buttonColors(containerColor = GlowGreen),
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text("Download & Install Update Now", color = Color(0xFF0F172A), fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                    is com.salahkeeper.app.data.service.UpdateState.Downloading -> {
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text("Downloading update: ${state.progressPercent}%", color = Color.White, fontSize = 12.sp)
+                            androidx.compose.material3.LinearProgressIndicator(
+                                progress = { state.progressPercent / 100f },
+                                modifier = Modifier.fillMaxWidth(),
+                                color = GlowGreen,
+                                trackColor = Color.White.copy(alpha = 0.1f)
+                            )
+                        }
+                    }
+                    is com.salahkeeper.app.data.service.UpdateState.ReadyToInstall -> {
+                        Text("Ready to install! Triggering package installer...", color = GlowGreen, fontSize = 12.sp)
+                    }
+                    is com.salahkeeper.app.data.service.UpdateState.Error -> {
+                        Text(state.message, color = Color(0xFFFCA5A5), fontSize = 11.sp)
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
         // SECTION: Calculation Method & Madhab
         Text(
             text = "Calculation Rules",

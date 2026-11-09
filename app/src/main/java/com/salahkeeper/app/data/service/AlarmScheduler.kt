@@ -35,6 +35,12 @@ class AlarmScheduler @Inject constructor(
             if (timing.isEnabled && timing.timeMillis > now) {
                 scheduleExactAlarm(timing.type, timing.timeMillis)
             }
+            if (timing.isEnabled && settings.isPreReminderEnabled) {
+                val reminderTime = timing.timeMillis - (settings.preReminderMinutes * 60 * 1000L)
+                if (reminderTime > now) {
+                    schedulePreReminder(timing.type, timing.timeMillis, reminderTime, settings.preReminderMinutes)
+                }
+            }
         }
 
         // Also schedule tomorrow's prayers to guarantee coverage across midnight
@@ -46,7 +52,40 @@ class AlarmScheduler @Inject constructor(
         for (timing in tomorrowTimings) {
             if (timing.isEnabled) {
                 scheduleExactAlarm(timing.type, timing.timeMillis)
+                if (settings.isPreReminderEnabled) {
+                    val reminderTime = timing.timeMillis - (settings.preReminderMinutes * 60 * 1000L)
+                    schedulePreReminder(timing.type, timing.timeMillis, reminderTime, settings.preReminderMinutes)
+                }
             }
+        }
+    }
+
+    fun schedulePreReminder(
+        prayerType: PrayerType,
+        scheduledTime: Long,
+        triggerAtMillis: Long,
+        reminderMinutes: Int
+    ) {
+        if (alarmManager == null) return
+
+        val intent = Intent(context, PrePrayerReminderReceiver::class.java).apply {
+            action = PrePrayerReminderReceiver.ACTION_PRE_PRAYER_REMINDER
+            putExtra(EXTRA_PRAYER_NAME, prayerType.name)
+            putExtra(EXTRA_SCHEDULED_TIME, scheduledTime)
+            putExtra(PrePrayerReminderReceiver.EXTRA_REMINDER_MINUTES, reminderMinutes)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            prayerType.ordinal + 300,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
         }
     }
 

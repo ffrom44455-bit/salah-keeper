@@ -139,6 +139,36 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        val updateState by settingsViewModel.updateState.collectAsState()
+        if (updateState is com.salahkeeper.app.data.service.UpdateState.Available) {
+            val update = updateState as com.salahkeeper.app.data.service.UpdateState.Available
+            GlassCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                hazeState = hazeState,
+                shape = RoundedCornerShape(16.dp),
+                cornerRadius = 16.dp,
+                surfaceAlpha = 0.22f,
+                borderAlpha = 0.5f,
+                onClick = { settingsViewModel.downloadAndInstall(update.downloadUrl) }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("🚀 New Update Available (v${update.versionTag})", color = Color(0xFFFDE047), fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                        Text("Tap to download and install automatically.", color = Color.White.copy(alpha = 0.8f), fontSize = 11.sp)
+                    }
+                    Text("Update", color = Color(0xFF38BDF8), fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                }
+            }
+        }
+
         // Hero Card with Countdown
         overview?.let { data ->
             GlassCard(

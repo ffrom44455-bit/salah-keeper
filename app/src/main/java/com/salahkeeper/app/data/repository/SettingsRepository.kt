@@ -40,7 +40,12 @@ data class AppSettings(
     val reduceEffects: Boolean = false,
     val isDarkMode: Boolean = true,
     val creatorName: String = "Salah Keeper User",
-    val isOnboardingCompleted: Boolean = false
+    val isOnboardingCompleted: Boolean = false,
+    val isPreReminderEnabled: Boolean = true,
+    val preReminderMinutes: Int = 7,
+    val autoCheckUpdates: Boolean = true,
+    val githubRepoOwner: String = "",
+    val githubRepoName: String = "salah-keeper"
 ) {
     fun isPrayerEnabled(type: PrayerType): Boolean {
         return when (type) {
@@ -81,6 +86,11 @@ class SettingsRepository @Inject constructor(
         val IS_DARK_MODE = booleanPreferencesKey("is_dark_mode")
         val CREATOR_NAME = stringPreferencesKey("creator_name")
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+        val PRE_REMINDER_ENABLED = booleanPreferencesKey("pre_reminder_enabled")
+        val PRE_REMINDER_MINUTES = androidx.datastore.preferences.core.intPreferencesKey("pre_reminder_minutes")
+        val AUTO_CHECK_UPDATES = booleanPreferencesKey("auto_check_updates")
+        val GITHUB_REPO_OWNER = stringPreferencesKey("github_repo_owner")
+        val GITHUB_REPO_NAME = stringPreferencesKey("github_repo_name")
     }
 
     val settingsFlow: Flow<AppSettings> = dataStore.data.map { prefs ->
@@ -109,7 +119,12 @@ class SettingsRepository @Inject constructor(
             reduceEffects = prefs[PreferencesKeys.REDUCE_EFFECTS] ?: false,
             isDarkMode = prefs[PreferencesKeys.IS_DARK_MODE] ?: true,
             creatorName = prefs[PreferencesKeys.CREATOR_NAME] ?: "Salah Keeper User",
-            isOnboardingCompleted = prefs[PreferencesKeys.ONBOARDING_COMPLETED] ?: false
+            isOnboardingCompleted = prefs[PreferencesKeys.ONBOARDING_COMPLETED] ?: false,
+            isPreReminderEnabled = prefs[PreferencesKeys.PRE_REMINDER_ENABLED] ?: true,
+            preReminderMinutes = prefs[PreferencesKeys.PRE_REMINDER_MINUTES] ?: 7,
+            autoCheckUpdates = prefs[PreferencesKeys.AUTO_CHECK_UPDATES] ?: true,
+            githubRepoOwner = prefs[PreferencesKeys.GITHUB_REPO_OWNER] ?: "",
+            githubRepoName = prefs[PreferencesKeys.GITHUB_REPO_NAME] ?: "salah-keeper"
         )
     }
 
@@ -174,5 +189,23 @@ class SettingsRepository @Inject constructor(
 
     suspend fun setOnboardingCompleted(completed: Boolean) {
         dataStore.edit { it[PreferencesKeys.ONBOARDING_COMPLETED] = completed }
+    }
+
+    suspend fun updatePreReminder(enabled: Boolean, minutes: Int) {
+        dataStore.edit {
+            it[PreferencesKeys.PRE_REMINDER_ENABLED] = enabled
+            it[PreferencesKeys.PRE_REMINDER_MINUTES] = minutes
+        }
+    }
+
+    suspend fun updateGithubRepo(owner: String, repo: String) {
+        dataStore.edit {
+            it[PreferencesKeys.GITHUB_REPO_OWNER] = owner
+            it[PreferencesKeys.GITHUB_REPO_NAME] = repo
+        }
+    }
+
+    suspend fun updateAutoCheckUpdates(autoCheck: Boolean) {
+        dataStore.edit { it[PreferencesKeys.AUTO_CHECK_UPDATES] = autoCheck }
     }
 }
