@@ -39,12 +39,12 @@ data class AppSettings(
     val manualIshaTime: String = "19:30",
     val reduceEffects: Boolean = false,
     val isDarkMode: Boolean = true,
-    val creatorName: String = "Salah Keeper User",
+    val creatorName: String = "Zayb",
     val isOnboardingCompleted: Boolean = false,
     val isPreReminderEnabled: Boolean = true,
     val preReminderMinutes: Int = 7,
     val autoCheckUpdates: Boolean = true,
-    val githubRepoOwner: String = "",
+    val githubRepoOwner: String = "ffrom44455-bit",
     val githubRepoName: String = "salah-keeper"
 ) {
     fun isPrayerEnabled(type: PrayerType): Boolean {
@@ -118,13 +118,13 @@ class SettingsRepository @Inject constructor(
             manualIshaTime = prefs[PreferencesKeys.MANUAL_ISHA] ?: "19:30",
             reduceEffects = prefs[PreferencesKeys.REDUCE_EFFECTS] ?: false,
             isDarkMode = prefs[PreferencesKeys.IS_DARK_MODE] ?: true,
-            creatorName = prefs[PreferencesKeys.CREATOR_NAME] ?: "Salah Keeper User",
+            creatorName = prefs[PreferencesKeys.CREATOR_NAME] ?: "Zayb",
             isOnboardingCompleted = prefs[PreferencesKeys.ONBOARDING_COMPLETED] ?: false,
             isPreReminderEnabled = prefs[PreferencesKeys.PRE_REMINDER_ENABLED] ?: true,
             preReminderMinutes = prefs[PreferencesKeys.PRE_REMINDER_MINUTES] ?: 7,
             autoCheckUpdates = prefs[PreferencesKeys.AUTO_CHECK_UPDATES] ?: true,
-            githubRepoOwner = prefs[PreferencesKeys.GITHUB_REPO_OWNER] ?: "",
-            githubRepoName = prefs[PreferencesKeys.GITHUB_REPO_NAME] ?: "salah-keeper"
+            githubRepoOwner = prefs[PreferencesKeys.GITHUB_REPO_OWNER]?.ifBlank { "ffrom44455-bit" } ?: "ffrom44455-bit",
+            githubRepoName = prefs[PreferencesKeys.GITHUB_REPO_NAME]?.ifBlank { "salah-keeper" } ?: "salah-keeper"
         )
     }
 

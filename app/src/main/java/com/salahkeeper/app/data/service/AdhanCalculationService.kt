@@ -56,50 +56,42 @@ class AdhanCalculationService @Inject constructor() {
     }
 
     private fun calculateManualTimings(settings: AppSettings, targetDate: Date): List<PrayerTiming> {
-        val cal = Calendar.getInstance().apply { time = targetDate }
-
-        fun parseTimeToMillis(timeStr: String): Long {
-            return try {
-                val parts = timeStr.trim().split(":")
-                val hour = parts[0].toInt()
-                val min = parts[1].toInt()
-                val prayerCal = Calendar.getInstance().apply {
-                    time = targetDate
-                    set(Calendar.HOUR_OF_DAY, hour)
-                    set(Calendar.MINUTE, min)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-                prayerCal.timeInMillis
-            } catch (e: Exception) {
-                cal.timeInMillis
+        fun toMillis(timeStr: String, type: PrayerType): Long {
+            val parsed = com.salahkeeper.app.util.SmartTimeParser.parse(timeStr, type)
+            val prayerCal = Calendar.getInstance().apply {
+                time = targetDate
+                set(Calendar.HOUR_OF_DAY, parsed.hour24)
+                set(Calendar.MINUTE, parsed.minute)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
             }
+            return prayerCal.timeInMillis
         }
 
         return listOf(
             PrayerTiming(
                 type = PrayerType.FAJR,
-                timeMillis = parseTimeToMillis(settings.manualFajrTime),
+                timeMillis = toMillis(settings.manualFajrTime, PrayerType.FAJR),
                 isEnabled = settings.isFajrEnabled
             ),
             PrayerTiming(
                 type = PrayerType.DHUHR,
-                timeMillis = parseTimeToMillis(settings.manualDhuhrTime),
+                timeMillis = toMillis(settings.manualDhuhrTime, PrayerType.DHUHR),
                 isEnabled = settings.isDhuhrEnabled
             ),
             PrayerTiming(
                 type = PrayerType.ASR,
-                timeMillis = parseTimeToMillis(settings.manualAsrTime),
+                timeMillis = toMillis(settings.manualAsrTime, PrayerType.ASR),
                 isEnabled = settings.isAsrEnabled
             ),
             PrayerTiming(
                 type = PrayerType.MAGHRIB,
-                timeMillis = parseTimeToMillis(settings.manualMaghribTime),
+                timeMillis = toMillis(settings.manualMaghribTime, PrayerType.MAGHRIB),
                 isEnabled = settings.isMaghribEnabled
             ),
             PrayerTiming(
                 type = PrayerType.ISHA,
-                timeMillis = parseTimeToMillis(settings.manualIshaTime),
+                timeMillis = toMillis(settings.manualIshaTime, PrayerType.ISHA),
                 isEnabled = settings.isIshaEnabled
             )
         )

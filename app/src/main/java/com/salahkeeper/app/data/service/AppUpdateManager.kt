@@ -47,13 +47,19 @@ class AppUpdateManager @Inject constructor(
     private val _updateState = MutableStateFlow<UpdateState>(UpdateState.Idle)
     val updateState: StateFlow<UpdateState> = _updateState.asStateFlow()
 
-    val currentVersion: String = "1.0.0"
+    val currentVersion: String
+        get() = try {
+            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            pInfo.versionName ?: "1.0.2"
+        } catch (e: Exception) {
+            "1.0.2"
+        }
 
     suspend fun checkForUpdates(customOwner: String? = null, customRepo: String? = null) = withContext(Dispatchers.IO) {
         _updateState.value = UpdateState.Checking
         try {
             val settings = settingsRepository.settingsFlow.first()
-            val owner = customOwner ?: settings.githubRepoOwner.ifBlank { "salah-keeper" }
+            val owner = customOwner ?: settings.githubRepoOwner.ifBlank { "ffrom44455-bit" }
             val repo = customRepo ?: settings.githubRepoName.ifBlank { "salah-keeper" }
 
             val apiUrl = "https://api.github.com/repos/$owner/$repo/releases/latest"

@@ -658,6 +658,57 @@ fun SettingsScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // SECTION: Creator Signature
+        GlassCard(
+            modifier = Modifier.fillMaxWidth(),
+            hazeState = hazeState,
+            shape = RoundedCornerShape(20.dp),
+            cornerRadius = 20.dp,
+            surfaceAlpha = 0.12f,
+            borderAlpha = 0.25f
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp, horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "✦ SALAH KEEPER ✦",
+                    color = Color(0xFF38BDF8),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 2.sp
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = "Crafted with care by",
+                        color = Color.White.copy(alpha = 0.75f),
+                        fontSize = 13.sp
+                    )
+                    Text(
+                        text = "Zayb",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Dedicated to keeping every believer connected with their Creator",
+                    color = Color.White.copy(alpha = 0.5f),
+                    fontSize = 11.sp,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(96.dp))
     }
 
@@ -696,46 +747,79 @@ fun SettingsScreen(
 
     // Manual 5 Times Dialog
     if (showManualTimesDialog) {
+        val parsedFajr = com.salahkeeper.app.util.SmartTimeParser.parse(manualFajr, PrayerType.FAJR)
+        val parsedDhuhr = com.salahkeeper.app.util.SmartTimeParser.parse(manualDhuhr, PrayerType.DHUHR)
+        val parsedAsr = com.salahkeeper.app.util.SmartTimeParser.parse(manualAsr, PrayerType.ASR)
+        val parsedMaghrib = com.salahkeeper.app.util.SmartTimeParser.parse(manualMaghrib, PrayerType.MAGHRIB)
+        val parsedIsha = com.salahkeeper.app.util.SmartTimeParser.parse(manualIsha, PrayerType.ISHA)
+
         AlertDialog(
             onDismissRequest = { showManualTimesDialog = false },
             containerColor = Color(0xFF0F172A),
-            title = { Text("Manual 5 Prayer Times", color = Color.White, fontWeight = FontWeight.Bold) },
+            title = { Text("Manual Prayer Times", color = Color.White, fontWeight = FontWeight.Bold) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Type 24h format times (HH:mm):", color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = "Type any time format (e.g. 5, 5am, 1:30, 4:30, 8:30). The app automatically understands AM & PM for each prayer!",
+                        color = Color.White.copy(alpha = 0.75f),
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp
+                    )
 
                     OutlinedTextField(
                         value = manualFajr,
                         onValueChange = { manualFajr = it },
-                        label = { Text("Fajr (e.g. 05:15)") },
+                        label = { Text("Fajr Time") },
+                        supportingText = {
+                            Text("💡 Sets alarm: ${parsedFajr.formatted12h}", color = Color(0xFF38BDF8), fontSize = 11.sp)
+                        },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.White, unfocusedTextColor = Color.White)
                     )
+
                     OutlinedTextField(
                         value = manualDhuhr,
                         onValueChange = { manualDhuhr = it },
-                        label = { Text("Dhuhr (e.g. 12:30)") },
+                        label = { Text("Dhuhr Time") },
+                        supportingText = {
+                            Text("💡 Sets alarm: ${parsedDhuhr.formatted12h}", color = Color(0xFF38BDF8), fontSize = 11.sp)
+                        },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.White, unfocusedTextColor = Color.White)
                     )
+
                     OutlinedTextField(
                         value = manualAsr,
                         onValueChange = { manualAsr = it },
-                        label = { Text("Asr (e.g. 15:45)") },
+                        label = { Text("Asr Time") },
+                        supportingText = {
+                            Text("💡 Sets alarm: ${parsedAsr.formatted12h}", color = Color(0xFF38BDF8), fontSize = 11.sp)
+                        },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.White, unfocusedTextColor = Color.White)
                     )
+
                     OutlinedTextField(
                         value = manualMaghrib,
                         onValueChange = { manualMaghrib = it },
-                        label = { Text("Maghrib (e.g. 18:10)") },
+                        label = { Text("Maghrib Time") },
+                        supportingText = {
+                            Text("💡 Sets alarm: ${parsedMaghrib.formatted12h}", color = Color(0xFF38BDF8), fontSize = 11.sp)
+                        },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.White, unfocusedTextColor = Color.White)
                     )
+
                     OutlinedTextField(
                         value = manualIsha,
                         onValueChange = { manualIsha = it },
-                        label = { Text("Isha (e.g. 19:30)") },
+                        label = { Text("Isha Time") },
+                        supportingText = {
+                            Text("💡 Sets alarm: ${parsedIsha.formatted12h}", color = Color(0xFF38BDF8), fontSize = 11.sp)
+                        },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.White, unfocusedTextColor = Color.White)
                     )
@@ -746,11 +830,11 @@ fun SettingsScreen(
                     onClick = {
                         settingsViewModel.updateManualTimes(
                             enabled = true,
-                            fajr = manualFajr,
-                            dhuhr = manualDhuhr,
-                            asr = manualAsr,
-                            maghrib = manualMaghrib,
-                            isha = manualIsha
+                            fajr = parsedFajr.formatted12h,
+                            dhuhr = parsedDhuhr.formatted12h,
+                            asr = parsedAsr.formatted12h,
+                            maghrib = parsedMaghrib.formatted12h,
+                            isha = parsedIsha.formatted12h
                         )
                         showManualTimesDialog = false
                     },
