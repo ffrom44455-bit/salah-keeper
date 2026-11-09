@@ -15,8 +15,8 @@ android {
         applicationId = "com.salahkeeper.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -26,12 +26,22 @@ android {
 
     signingConfigs {
         create("release") {
-            val keystoreFile = project.rootProject.file("release.keystore")
-            if (keystoreFile.exists()) {
-                storeFile = keystoreFile
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "salahkeeper"
+            val projectKeystore = file("keystore/release.jks")
+            val rootKeystore = project.rootProject.file("release.keystore")
+            if (projectKeystore.exists()) {
+                storeFile = projectKeystore
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "salahkeeperpass"
                 keyAlias = System.getenv("KEY_ALIAS") ?: "salahkeeper"
-                keyPassword = System.getenv("KEY_PASSWORD") ?: "salahkeeper"
+                keyPassword = System.getenv("KEY_PASSWORD") ?: "salahkeeperpass"
+                enableV1Signing = true
+                enableV2Signing = true
+            } else if (rootKeystore.exists()) {
+                storeFile = rootKeystore
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "salahkeeperpass"
+                keyAlias = System.getenv("KEY_ALIAS") ?: "salahkeeper"
+                keyPassword = System.getenv("KEY_PASSWORD") ?: "salahkeeperpass"
+                enableV1Signing = true
+                enableV2Signing = true
             }
         }
     }
@@ -39,16 +49,11 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            val releaseKeystore = project.rootProject.file("release.keystore")
-            if (releaseKeystore.exists()) {
-                signingConfig = signingConfigs.getByName("release")
-            } else {
-                signingConfig = signingConfigs.getByName("debug")
-            }
         }
         debug {
             isDebuggable = true

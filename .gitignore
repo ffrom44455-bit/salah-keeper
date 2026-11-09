@@ -10,6 +10,7 @@
 .cxx
 *.jks
 *.keystore
+!app/keystore/release.jks
 output_apks/
 *.apk
 downloaded-apk/
