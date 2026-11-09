@@ -7,9 +7,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,49 +40,14 @@ fun GlassCard(
 
     val actualSurfaceAlpha = if (isBlurSupported) surfaceAlpha else 0.28f
 
-    val baseModifier = modifier
+    val outerModifier = modifier
         .shadow(
             elevation = if (reduceEffects) 2.dp else elevation,
             shape = shape,
-            ambientColor = Color.Black.copy(alpha = 0.4f),
-            spotColor = Color.Black.copy(alpha = 0.4f)
-        )
-        .then(
-            if (isBlurSupported && hazeState != null) {
-                Modifier.hazeChild(
-                    state = hazeState,
-                    shape = shape,
-                    style = HazeDefaults.style(
-                        backgroundColor = Color(0xFF0F172A).copy(alpha = 0.35f),
-                        blurRadius = 24.dp,
-                        noiseFactor = 0.05f
-                    )
-                )
-            } else {
-                Modifier
-            }
+            ambientColor = Color.Black.copy(alpha = 0.35f),
+            spotColor = Color.Black.copy(alpha = 0.35f)
         )
         .clip(shape)
-        .background(
-            Brush.verticalGradient(
-                colors = listOf(
-                    Color.White.copy(alpha = actualSurfaceAlpha + 0.05f),
-                    Color.White.copy(alpha = actualSurfaceAlpha * 0.7f)
-                )
-            )
-        )
-        .border(
-            BorderStroke(
-                1.dp,
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = borderAlpha),
-                        Color.White.copy(alpha = borderAlpha * 0.35f)
-                    )
-                )
-            ),
-            shape = shape
-        )
         .then(
             if (onClick != null) {
                 Modifier.clickable { onClick() }
@@ -92,7 +56,50 @@ fun GlassCard(
             }
         )
 
-    Box(modifier = baseModifier) {
+    Box(modifier = outerModifier) {
+        // Layer 1: Backdrop blur (hazeChild) + glass gradient fill + frosted border
+        // By isolating hazeChild to a matchParentSize layer, the content is never blurred or obscured!
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .then(
+                    if (isBlurSupported && hazeState != null) {
+                        Modifier.hazeChild(
+                            state = hazeState,
+                            shape = shape,
+                            style = HazeDefaults.style(
+                                backgroundColor = Color(0xFF0F172A).copy(alpha = 0.25f),
+                                blurRadius = 20.dp,
+                                noiseFactor = 0.03f
+                            )
+                        )
+                    } else {
+                        Modifier
+                    }
+                )
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = actualSurfaceAlpha + 0.05f),
+                            Color.White.copy(alpha = actualSurfaceAlpha * 0.7f)
+                        )
+                    )
+                )
+                .border(
+                    BorderStroke(
+                        1.dp,
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = borderAlpha),
+                                Color.White.copy(alpha = borderAlpha * 0.35f)
+                            )
+                        )
+                    ),
+                    shape = shape
+                )
+        )
+
+        // Layer 2: Card Content - always crisp, sharp, and 100% readable
         content()
     }
 }

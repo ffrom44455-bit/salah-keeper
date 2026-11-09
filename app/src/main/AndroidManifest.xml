@@ -31,6 +31,9 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Overlay & Pop-up over active apps (e.g. Instagram) when alarm rings -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <application
         android:name=".SalahKeeperApp"
         android:allowBackup="true"

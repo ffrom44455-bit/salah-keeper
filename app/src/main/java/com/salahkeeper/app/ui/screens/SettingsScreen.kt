@@ -162,6 +162,42 @@ fun SettingsScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Display-over-other-apps permission so the alarm screen pops up over Instagram / home screen
+        GlassCard(
+            modifier = Modifier.fillMaxWidth(),
+            hazeState = hazeState,
+            shape = RoundedCornerShape(20.dp),
+            cornerRadius = 20.dp,
+            surfaceAlpha = 0.16f,
+            onClick = {
+                HapticFeedbackUtil.performTap(context)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    val overlayIntent = android.content.Intent(
+                        android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        android.net.Uri.parse("package:" + context.packageName)
+                    ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                    try { context.startActivity(overlayIntent) } catch (e: Exception) { e.printStackTrace() }
+                }
+            }
+        ) {
+            Column(modifier = Modifier.fillMaxWidth().padding(18.dp)) {
+                Text(
+                    text = "Show alarm over other apps",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Tap and turn on \"Display over other apps\" so the prayer screen pops up even while you're on Instagram or the home screen.",
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 12.sp
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(20.dp))
 
         // SECTION: Pre-Prayer Preparation Reminder (7 mins before)
