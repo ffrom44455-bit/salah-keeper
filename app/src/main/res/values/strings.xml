@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Salah Keeper</string>
+    <string name="tagline">Time to pause and connect</string>
+
+    <!-- Prayers -->
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+
+    <!-- Alarm & Dua -->
+    <string name="im_going_to_pray">I\'m going to pray</string>
+    <string name="emergency_stop">Emergency stop</string>
+    <string name="emergency_stop_hint">Hold for 3 seconds</string>
+    <string name="alarm_ringing_title">%1$s Prayer Call</string>
+    <string name="alarm_ringing_desc">Time to connect with your Creator.</string>
+    <string name="dua_arabic">اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ</string>
+    <string name="dua_transliteration">Allahumma a\'inni \'ala dhikrika wa shukrika wa husni \'ibadatik</string>
+    <string name="dua_translation">"O Allah, help me remember You, thank You, and worship You in the best way."</string>
+    <string name="dua_instruction">Recite the Dua aloud to stop the alarm</string>
+    <string name="dua_listening">Listening for your recitation...</string>
+    <string name="dua_matched">Masha\'Allah! May your prayer be accepted.</string>
+
+    <!-- Post Prayer Check -->
+    <string name="post_prayer_title">Did you pray %1$s?</string>
+    <string name="post_prayer_desc">Take a moment to record your prayer status.</string>
+    <string name="btn_yes_on_time">Yes (on time)</string>
+    <string name="btn_yes_late">Yes (late)</string>
+    <string name="btn_missed">Missed</string>
+
+    <!-- Onboarding Permissions -->
+    <string name="perm_exact_alarm_title">Exact Alarms</string>
+    <string name="perm_exact_alarm_desc">Guarantees Adhan rings right at the exact second prayer time arrives.</string>
+    <string name="perm_full_screen_title">Lock Screen Wake-Up</string>
+    <string name="perm_full_screen_desc">Displays the prayer call directly over your lock screen when your phone is asleep.</string>
+    <string name="perm_notifications_title">Notifications</string>
+    <string name="perm_notifications_desc">Keeps the prayer service running and reminds you to check in 20 minutes later.</string>
+    <string name="perm_record_audio_title">Microphone Access</string>
+    <string name="perm_record_audio_desc">Listens for your voice when reciting the Dua to verify and stop the alarm.</string>
+    <string name="perm_battery_title">Battery Optimization Exemption</string>
+    <string name="perm_battery_desc">Prevents Android and aggressive OEM task killers from silencing your prayer alarm.</string>
+
+    <!-- General Microcopy -->
+    <string name="streak_encouragement">%1$d days in a row, keep going!</string>
+    <string name="streak_share_made_by">Made with Salah Keeper</string>
+</resources>
