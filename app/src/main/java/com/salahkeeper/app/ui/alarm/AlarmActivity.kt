@@ -179,12 +179,15 @@ fun AlarmScreenContent(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .haze(hazeState)
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Mesh gradient background
-        AnimatedMeshGradient(activePrayer = prayerType)
+        // Mesh gradient background with haze capture source
+        AnimatedMeshGradient(
+            activePrayer = prayerType,
+            modifier = Modifier
+                .fillMaxSize()
+                .haze(hazeState)
+        )
 
         if (stage == AlarmScreenStage.ALARM_CALL) {
             AlarmCallStage(

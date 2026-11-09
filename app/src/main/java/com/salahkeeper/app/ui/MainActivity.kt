@@ -71,12 +71,15 @@ class MainActivity : ComponentActivity() {
                 val activePrayer = todayOverview?.nextPrayer?.type ?: PrayerType.FAJR
 
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .haze(hazeState)
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    // Mesh gradient background
-                    AnimatedMeshGradient(activePrayer = activePrayer)
+                    // Mesh gradient background with haze capture source
+                    AnimatedMeshGradient(
+                        activePrayer = activePrayer,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .haze(hazeState)
+                    )
 
                     when (currentScreen) {
                         AppScreen.ONBOARDING -> {
