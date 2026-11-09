@@ -21,7 +21,7 @@ class AdhanCalculationService @Inject constructor() {
 
         val coordinates = Coordinates(settings.latitude, settings.longitude)
         val dateComponents = DateComponents.from(targetDate)
-        val params = settings.calculationMethod.adhanMethod.parameters.copy()
+        val params = settings.calculationMethod.adhanMethod.parameters
         params.madhab = settings.madhab.adhanMadhab
 
         val prayerTimes = PrayerTimes(coordinates, dateComponents, params)

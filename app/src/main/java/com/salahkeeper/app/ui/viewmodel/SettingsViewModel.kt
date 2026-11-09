@@ -35,6 +35,8 @@ class SettingsViewModel @Inject constructor(
         initialValue = AppSettings()
     )
 
+    val settingsFlow: StateFlow<AppSettings> get() = settings
+
     init {
         // Auto check updates on launch if enabled
         viewModelScope.launch {

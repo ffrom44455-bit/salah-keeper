@@ -67,7 +67,7 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val overview by homeViewModel.todayOverview.collectAsState()
-    val settings by settingsViewModel.settingsFlow.collectAsState(initial = settingsViewModel.settings.value)
+    val settings by settingsViewModel.settings.collectAsState()
 
     var selectedTimingForEdit by remember { mutableStateOf<PrayerTiming?>(null) }
 

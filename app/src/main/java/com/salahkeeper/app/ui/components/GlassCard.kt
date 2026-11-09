@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +34,7 @@ fun GlassCard(
     borderAlpha: Float = 0.22f,
     surfaceAlpha: Float = 0.14f,
     onClick: (() -> Unit)? = null,
-    content: @Composable () -> Unit
+    content: @Composable BoxScope.() -> Unit
 ) {
     val reduceEffects = LocalReduceEffects.current
     val isBlurSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !reduceEffects

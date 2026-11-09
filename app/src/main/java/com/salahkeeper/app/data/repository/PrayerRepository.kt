@@ -10,6 +10,7 @@ import com.salahkeeper.app.data.service.AlarmScheduler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -84,7 +85,7 @@ class PrayerRepository @Inject constructor(
     }
 
     private fun Flow<List<PrayerLogEntity>>.mapToStats(): Flow<StreakStatistics> {
-        return kotlinx.coroutines.flow.map { logs ->
+        return this.map { logs ->
             val currentStreak = calculateCurrentStreak(logs)
             val longestStreak = calculateLongestStreak(logs)
 

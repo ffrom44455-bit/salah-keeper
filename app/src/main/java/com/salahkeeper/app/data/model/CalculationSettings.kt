@@ -16,7 +16,7 @@ enum class CalculationMethodOption(
     QATAR("Qatar", CalculationMethod.QATAR),
     KUWAIT("Kuwait", CalculationMethod.KUWAIT),
     SINGAPORE("Singapore", CalculationMethod.SINGAPORE),
-    TEHRAN("Institute of Geophysics, Tehran", CalculationMethod.TEHRAN);
+    MOON_SIGHTING_COMMITTEE("Moonsighting Committee", CalculationMethod.MOON_SIGHTING_COMMITTEE);
 
     companion object {
         fun fromName(name: String): CalculationMethodOption {

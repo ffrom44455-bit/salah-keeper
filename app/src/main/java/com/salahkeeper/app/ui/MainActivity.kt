@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            val settings by settingsViewModel.settingsFlow.collectAsState(initial = settingsViewModel.settings.value)
+            val settings by settingsViewModel.settings.collectAsState()
             val todayOverview by homeViewModel.todayOverview.collectAsState()
 
             SalahKeeperTheme(
