@@ -11,3 +11,5 @@
 *.jks
 *.keystore
 output_apks/
+*.apk
+downloaded-apk/
