@@ -30,16 +30,16 @@ android {
             val rootKeystore = project.rootProject.file("release.keystore")
             if (projectKeystore.exists()) {
                 storeFile = projectKeystore
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "salahkeeperpass"
-                keyAlias = System.getenv("KEY_ALIAS") ?: "salahkeeper"
-                keyPassword = System.getenv("KEY_PASSWORD") ?: "salahkeeperpass"
+                storePassword = System.getenv("KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() } ?: "salahkeeperpass"
+                keyAlias = System.getenv("KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: "salahkeeper"
+                keyPassword = System.getenv("KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: "salahkeeperpass"
                 enableV1Signing = true
                 enableV2Signing = true
             } else if (rootKeystore.exists()) {
                 storeFile = rootKeystore
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "salahkeeperpass"
-                keyAlias = System.getenv("KEY_ALIAS") ?: "salahkeeper"
-                keyPassword = System.getenv("KEY_PASSWORD") ?: "salahkeeperpass"
+                storePassword = System.getenv("KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() } ?: "salahkeeperpass"
+                keyAlias = System.getenv("KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: "salahkeeper"
+                keyPassword = System.getenv("KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: "salahkeeperpass"
                 enableV1Signing = true
                 enableV2Signing = true
             }
